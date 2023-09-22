@@ -7,13 +7,21 @@
 #include <CesiumGeospatial/GlobeTransforms.h>
 #include <CesiumUtility/Math.h>
 
+
 #include <DotNet/CesiumForUnity/CesiumGeoreference.h>
 #include <DotNet/UnityEngine/Camera.h>
 #include <DotNet/UnityEngine/GameObject.h>
 #include <DotNet/UnityEngine/Matrix4x4.h>
 #include <DotNet/UnityEngine/Transform.h>
 #include <DotNet/UnityEngine/Vector3.h>
+#include <DotNet/UnityEngine/Debug.h>
+#include <DotNet/System/Array1.h>
+#include <DotNet/System/String.h>
 #include <glm/trigonometric.hpp>
+
+#include <DotNet/System/Object.h>
+#include <DotNet/UnityEngine/Object.h>
+
 
 #if UNITY_EDITOR
 #include <DotNet/UnityEditor/EditorApplication.h>
@@ -98,11 +106,27 @@ std::vector<ViewState> CameraManager::getAllCameras(const GameObject& context) {
   }
 
   std::vector<ViewState> result;
-  Camera camera = Camera::main();
-  if (camera != nullptr) {
-    result.emplace_back(
-        unityCameraToViewState(pCoordinateSystem, unityWorldToTileset, camera));
+  ::DotNet::System::Array1<Camera> cameras = Camera::allCameras();
+
+  if (cameras != nullptr) {
+    for (int i = 0; i < cameras.Length(); i++) {
+      Camera camera = cameras[i];
+
+      if (camera != nullptr) {
+        result.emplace_back(unityCameraToViewState(
+            pCoordinateSystem,
+            unityWorldToTileset,
+            camera));
+      } 
+    }
   }
+
+
+  //Camera camera = Camera::main();
+  //if (camera != nullptr) {
+  //  result.emplace_back(
+  //      unityCameraToViewState(pCoordinateSystem, unityWorldToTileset, camera));
+  //}
 
 #if UNITY_EDITOR
   if (!EditorApplication::isPlaying()) {

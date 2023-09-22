@@ -56,10 +56,18 @@ namespace CesiumForUnity
         public void ExposeToCPP()
         {
             Camera c = Camera.main;
+			Camera[] cams = Camera.allCameras;
+			Camera foocam = cams[0];
+			cams[0] = c;
+			string cam_tag = c.tag;
+			string cam_name = c.name;
+			bool cam_enabled = c.enabled; 		
+			int ncams = Camera.allCamerasCount;	
+			
             Transform t = c.transform;
             Vector3 u = t.up;
             Vector3 f = t.forward;
-
+			
             Vector4 v = new Vector4(1.0f, 0.0f, 1.0f, 0.0f);
 
             t.position = new Vector3();
